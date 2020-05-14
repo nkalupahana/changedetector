@@ -24,8 +24,8 @@ log("execution begins : " + Date().toString());
 
 for (let url of env.search) {
     const urlRepresentation = md5(url);
-    if (fs.existsSync(`./${urlRepresentation}.hash`)) {
-        const currentHash = fs.readFileSync(`./${urlRepresentation}.hash`).toString();
+    if (fs.existsSync(`./.${urlRepresentation}.hash`)) {
+        const currentHash = fs.readFileSync(`./.${urlRepresentation}.hash`).toString();
         exec(`curl '${url}' --output - | md5`, (_err, stdout, _stderr) => {
             if (stdout.trim() !== currentHash) {
                 log(`DIFFERENCE FOUND IN ${url}!`);
@@ -56,6 +56,6 @@ function sendMessage(url) {
 
 function writeHash(url) {
     exec(`curl '${url}' --output - | md5`, (_err, stdout, _stderr) => {
-        fs.writeFileSync(`./${md5(url)}.hash`, stdout.trim());
+        fs.writeFileSync(`./.${md5(url)}.hash`, stdout.trim());
     });
 }
