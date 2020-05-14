@@ -1,0 +1,21 @@
+{
+  "name": "changedetector",
+  "version": "1.0.0",
+  "description": "Get a text when a URL changes!",
+  "main": "detect.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nkalupahana/changedetector.git"
+  },
+  "author": "Nisala Kalupahana",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/nkalupahana/changedetector/issues"
+  },
+  "homepage": "https://github.com/nkalupahana/changedetector#readme",
+  "dependencies": {
+    "aws-sdk": "^2.668.0",
+    "dotenv": "^8.2.0",
+    "md5": "^2.2.1"
+  }
+}
