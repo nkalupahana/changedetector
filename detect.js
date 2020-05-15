@@ -26,7 +26,7 @@ for (let url of env.search) {
     const urlRepresentation = md5(url);
     if (fs.existsSync(`./.${urlRepresentation}.hash`)) {
         const currentHash = fs.readFileSync(`./.${urlRepresentation}.hash`).toString();
-        exec(`curl '${url}' --output - | md5`, (_err, stdout, _stderr) => {
+        exec(`curl '${url}' --output - | md5sum`, (_err, stdout, _stderr) => {
             if (stdout.trim() !== currentHash.trim()) {
                 log(`DIFFERENCE FOUND IN ${url}!`);
                 writeHash(url);
