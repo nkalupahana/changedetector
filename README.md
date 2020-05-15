@@ -5,7 +5,7 @@ Are you waiting for a URL to come online? Or waiting for a website to update its
 ## Requirements
 * AWS IAM account with SNS write policy
 * `node` (tested on > v8) and `npm`
-* `curl` and `md5` for the actual script
+* `curl` and `md5sum` for the actual script
 * `cron` for scheduling the script run
 
 ## Setup
