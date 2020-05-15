@@ -55,7 +55,7 @@ function sendMessage(url) {
 }
 
 function writeHash(url) {
-    exec(`curl '${url}' --output - | md5`, (_err, stdout, _stderr) => {
+    exec(`curl '${url}' --output - | md5sum`, (_err, stdout, _stderr) => {
         fs.writeFileSync(`./.${md5(url)}.hash`, stdout.trim());
     });
 }
