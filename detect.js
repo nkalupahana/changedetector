@@ -26,9 +26,12 @@ for (let url of env.search) {
     const urlRepresentation = md5(url);
     if (fs.existsSync(`./.${urlRepresentation}.hash`)) {
         const currentHash = fs.readFileSync(`./.${urlRepresentation}.hash`).toString();
-        exec(`curl '${url}' --output - | md5sum`, (_err, stdout, _stderr) => {
-            if (stdout.trim() !== currentHash.trim()) {
+        exec(`curl '${url}' --output - | md5sum`, (_err, stdout, stderr) => {
+            if ((stdout.trim() !== currentHash.trim()) && !stderr.includes("Failed to connect")) {
                 log(`DIFFERENCE FOUND IN ${url}!`);
+                log(currentHash.trim());
+                log(stdout.trim());
+                log(stderr);
                 writeHash(url);
                 sendMessage(url);
             } else {
