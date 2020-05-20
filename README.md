@@ -1,11 +1,11 @@
 # ChangeDetector
 
-Are you waiting for a URL to come online? Or waiting for a website to update its information? Well, instead of just refereshing forever, this script can be installed in `cron` to text you when the URL changes!
+Are you waiting for a URL to come online? Or waiting for a website to update its information? Well, instead of just refereshing forever, this script can be installed in `cron` to text you when the URL changes with a copy of the old and new website!
 
 ## Requirements
 * AWS IAM account with SNS write policy
+* Pastebin account (for sending the website data)
 * `node` (tested on > v8) and `npm`
-* `curl` and `md5sum` for the actual script
 * `cron` for scheduling the script run
 
 ## Setup

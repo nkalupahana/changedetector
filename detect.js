@@ -1,4 +1,4 @@
-const {exec} = require('child_process');
+const request = require("request");
 const env = require("./env");
 const fs = require("fs");
 const md5 = require("md5");
@@ -24,30 +24,57 @@ log("execution begins : " + Date().toString());
 
 for (let url of env.search) {
     const urlRepresentation = md5(url);
-    if (fs.existsSync(`./.${urlRepresentation}.hash`)) {
-        const currentHash = fs.readFileSync(`./.${urlRepresentation}.hash`).toString();
-        exec(`curl '${url}' --output - | md5sum`, (_err, stdout, stderr) => {
-            if ((stdout.trim() !== currentHash.trim()) && !stderr.includes("Failed to connect")) {
+    if (fs.existsSync(`./.${urlRepresentation}.site`)) {
+        const oldSite = fs.readFileSync(`./.${urlRepresentation}.site`).toString();
+        request(url, async (error, _res, newSite) => {
+            if (error) {
+                console.log(error);
+                log(`Error pulling new data for ${url}, skipping.`);
+                return;
+            }
+
+            let newHash = md5(newSite);
+            let oldHash = md5(oldSite)
+            if (newHash !==  oldHash) {
                 log(`DIFFERENCE FOUND IN ${url}!`);
-                log(currentHash.trim());
-                log(stdout.trim());
-                log(stderr);
-                writeHash(url);
-                sendMessage(url);
+                log(newHash);
+                log(oldHash);
+                writeSiteFile(url, newSite);
+                const pastebinURL = await new Promise((res, _rej) => {
+                    request.post({url:'https://pastebin.com/api/api_post.php', form: {
+                    api_option: "paste",
+                    api_user_key: "",
+                    api_paste_private: "0",
+                    api_paste_name: `File Comparison for ${url}`,
+                    api_paste_expire_date: "1W",
+                    api_paste_format: "html5",
+                    api_dev_key: env.pastebin,
+                    api_paste_code: `Old file:\n\n${oldSite}\n\nNew file:\n\n${newSite}`
+                    }}, function(err, _res, body) {
+                        if (err) {
+                            log("Pastebin error, skipping.");
+                            res("N/A");
+                        } else {
+                            res(body);
+                        }
+                    });
+                });
+
+                log(pastebinURL);
+                sendMessage(url, pastebinURL);
             } else {
                 log(`No differences found in ${url}, continuing.`);
             }
         });
     } else {
-        log(`Writing initial hash for ${url}.`);
-        writeHash(url);
+        writeSiteFile(url);
     }
 }
 
-function sendMessage(url) {
+function sendMessage(url, pastebinURL) {
     // Set up and publish text message
     var params = {
-        Message: `This website has changed! : ${url}`,
+        Message: `This website has changed (see changes at ${pastebinURL})! : ${url}`,
         PhoneNumber: env.aws.PHONE,
     };
 
@@ -57,8 +84,19 @@ function sendMessage(url) {
     });
 }
 
-function writeHash(url) {
-    exec(`curl '${url}' --output - | md5sum`, (_err, stdout, _stderr) => {
-        fs.writeFileSync(`./.${md5(url)}.hash`, stdout.trim());
-    });
+async function writeSiteFile(url, data) {
+    if (!data) {
+        log(`Writing initial site file for ${url}.`);
+        data = await new Promise((res, rej) => {
+            request(url, (error, _res, body) => {
+                if (error) {
+                    res(writeSiteFile(url));
+                }
+
+                res(body);
+            });
+        });
+    }
+
+    fs.writeFileSync(`./.${md5(url)}.site`, data);
 }

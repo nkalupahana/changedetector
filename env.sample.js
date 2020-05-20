@@ -8,5 +8,8 @@ exports.aws = {
     PHONE: "+19876543210"
 }
 
+// Pastebin API key (from https://pastebin.com/api#1)
+exports.pastebin = "";
+
 // Array of sites to check
-exports.search = ["https://xkcd.com"]
+exports.search = ["https://xkcd.com"];
