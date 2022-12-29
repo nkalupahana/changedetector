@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/nkalupahana/changedetector#readme",
   "dependencies": {
-    "aws-sdk": "^2.668.0",
+    "aws-sdk": "^2.814.0",
     "dotenv": "^8.2.0",
     "md5": "^2.2.1",
     "request": "^2.88.2"
